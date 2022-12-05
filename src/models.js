@@ -24,6 +24,7 @@ document.body.style.overflow = 'scroll';
 let camera, cameraTarget, scene;
 const width = window.innerWidth;
 const height = window.innerHeight;
+var scrollPosition = 0;
 
 
 
@@ -101,7 +102,7 @@ function init() {
 
     } );
 
-    loader.load( './models/ply/ascii/test.ply', function ( geometry ) {
+    var model = loader.load( './models/ply/ascii/test.ply', function ( geometry ) {
 
         geometry.computeVertexNormals();
 
@@ -112,12 +113,15 @@ function init() {
         
         mesh.rotation.x = -Math.PI / 2;
         mesh.scale.multiplyScalar( 0.1 );
-        document.getElementById('button').addEventListener('click', () => {
+       
+        document.getElementById('button_1').addEventListener('click', () => {
             mesh.visible = !mesh.visible;
         });
         
         scene.add( mesh );
     } );
+
+    
 
     // model = loader.parse( './models/ply/ascii/test.ply', 'ply');
     // console.log(model);
@@ -152,19 +156,28 @@ function init() {
 
     window.onscroll = function() {
         // Get the number of pixels the user has scrolled
-        var scrollPosition = window.scrollY;
-       
+        scrollPosition = window.scrollY;
+        
+        
+       if(scrollPosition > 700){
+        scrollPosition -= 700;
+       }
 
         // Loop through the child elements
         for (var i = 0; i < children.length; i++) {
             // Calculate the distance of the element from the middle of the viewport
             var elementTop = children[i].offsetTop;
             var distance = Math.abs(scrollPosition + (window.innerHeight / 2) - elementTop);
-            console.log(i, elementTop, window.innerHeight / 2, distance);
+            // console.log(i, elementTop, window.innerHeight / 2, distance);
             // Calculate the new transparency for the element (from minOpacity to maxOpacity)
-            var newOpacity = maxOpacity - (distance / 500);
+            var newOpacity = (maxOpacity - (distance / 1000) )* 2;
             
+            
+            console.log("scrollPosition", scrollPosition);
+            
+
             newOpacity = Math.max(newOpacity, minOpacity);
+            console.log("newOpacity", newOpacity);
 
             // Update the element's transparency
             children[i].style.opacity = newOpacity;
@@ -204,7 +217,7 @@ function render(time) {
     requestAnimationFrame(render);
 }
 
-document.getElementById('button').addEventListener('click', () => {
+document.getElementById('button_1').addEventListener('click', () => {
     camera.position.set( -2.1, -0.4, -3.6);
     render(performance.now());
 });

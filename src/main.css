@@ -72,10 +72,10 @@ a, button, input, select {
 	z-index: 1;
 }
 
-/* #overlay-canvas .interactive-area {
+#overlay-canvas .interactive-area {
 	/* CSS styles for the interactive area of canvas 1 */
 	pointer-events: auto; 
-  } */
+}
 
 #three-container {
 	overflow: hidden;
@@ -83,8 +83,17 @@ a, button, input, select {
 	z-index: 0;
 }
 
-#button {
+#button_1 {
     position: absolute;
+	top: 20px;
+	left: 100px;
+    z-index: 2;
+}
+
+#button_2 {
+    position: absolute;
+	top: 700px;
+	right: 100px;
     z-index: 2;
 }
 
@@ -95,7 +104,7 @@ a, button, input, select {
 	top: 50px;
 	left: 100px;	
 	opacity: 1;
-	z-index: 3;
+	z-index: 1;
 }
 
 #container2 {
@@ -105,17 +114,27 @@ a, button, input, select {
 	top: 200px;
 	right: 50px;	
 	opacity: 1;
-	z-index: 3;
+	z-index: 1;
+}
+
+.flex-container-column {
+	display: flex;
+	flex-direction: column;
+}
+
+.flex-container-row{
+	display: flex;
+	flex-direction: row;
 }
 
 .my_text {
+	width: 400px;
 	font-size: 32px; 
 	line-height: 40px;
 }
 
 .ai_text {
-	position: relative;
-	right: 0;
+	/* right: 0; */
 	width: 300px;
 	white-space: normal;
 	font-size: 14px;
