@@ -1,0 +1,5 @@
+" TikTok's location-based recommendation algorithm works by first identifying the user's location, then analyzing the user's search
+history to determine what type of content they are likely to be interested in. The algorithm then uses machine learning to compare the
+user's interests with content that is popular in their local area and recommends content that fits the user's interests. 
+By recommending content that is popular in the user's local area, the algorithm encourages them to explore new content and connect with 
+people who share similar interests. "
