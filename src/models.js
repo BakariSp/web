@@ -24,7 +24,7 @@ document.body.style.overflow = 'scroll';
 let camera, cameraTarget, scene;
 const width = window.innerWidth;
 const height = window.innerHeight;
-var scrollPosition = 0;
+
 
 
 
@@ -36,6 +36,7 @@ let lastFrameTime = 0;
 const frameInterval = 1000 / 60; 
 
 init();
+// animate();
 
 var orbit = new THREE.Object3D();
 orbit.add(camera);
@@ -44,14 +45,36 @@ orbit.add(camera);
 scene.add(orbit);
 
 // Define the rotation speed of the camera
-var rotationSpeed = 0.005;
+var rotationSpeed = 0.00;
 
 // Define the radius of the camera's orbit
 var radius = 3;
 
+
+
 // render();
+function vis_switch( mesh, gate1, gate2){
+    var scrollPos = window.scrollY;
+    if (scrollPos < gate2 && scrollPos > gate1 && mesh.visible == false ){
+        mesh.visible = true;
+    }else if( (scrollPos < gate1||scrollPos > gate2) && mesh.visible == true ){
+        mesh.visible = false;
+    }
+    
+    rotationSpeed = scrollPos%1000 / 100000;
+    rotationSpeed = Math.max(0.0005, rotationSpeed);
+    rotationSpeed = Math.min(0.005, rotationSpeed); 
+}
+
+function op_change(mesh){
+    var scrollPos = window.scrollY;
+    mesh.emissiveIntensity  = scrollPos%1000 / 1000;
+}
 
 function init() {
+    
+
+    rotationSpeed = 0.005;
 
     camera = new THREE.PerspectiveCamera( 35, window.innerWidth / window.innerHeight, 1, 15 );
     camera.position.set( 3, 0.15, 3 );
@@ -61,6 +84,11 @@ function init() {
     //scene.background = new THREE.Color( 000000 );
     scene.fog = new THREE.Fog( 0x72645b, 2, 15 );
 
+    const color = 0xFFFFFF;
+    const intensity = 0.1;
+    const light = new THREE.DirectionalLight(color, intensity);
+    light.position.set(-1, 2, 4);
+    scene.add(light);
 
     // PLY file
     const loader = new PLYLoader();
@@ -75,34 +103,14 @@ function init() {
         mesh.position.z = 0.3;
         mesh.rotation.x = - Math.PI / 2;
         mesh.scale.multiplyScalar( 0.001 );
-
-        mesh.castShadow = true;
-        mesh.receiveShadow = true;
+        mesh.visible = false;
 
         scene.add( mesh );
+        console.log(scene);
 
     } );
 
-    loader.load( './models/ply/binary/Lucy100k.ply', function ( geometry ) {
-
-        geometry.computeVertexNormals();
-
-        const material = new THREE.PointsMaterial( { size: 0.01 } );
-        const mesh = new THREE.Points( geometry, material );
-
-        mesh.position.x = - 0.2;
-        mesh.position.y = - 0.02;
-        mesh.position.z = - 0.2;
-        mesh.scale.multiplyScalar( 0.0006 );
-
-        mesh.castShadow = true;
-        mesh.receiveShadow = true;
-
-        scene.add( mesh );
-
-    } );
-
-    var model = loader.load( './models/ply/ascii/test.ply', function ( geometry ) {
+    loader.load( './models/ply/ascii/test.ply', function ( geometry ) {
 
         geometry.computeVertexNormals();
 
@@ -113,7 +121,11 @@ function init() {
         
         mesh.rotation.x = -Math.PI / 2;
         mesh.scale.multiplyScalar( 0.1 );
-       
+        // mesh.visible = false;
+        window.addEventListener('scroll', (event) => {
+            vis_switch( mesh, 0, 1000);
+
+        });
         document.getElementById('button_1').addEventListener('click', () => {
             mesh.visible = !mesh.visible;
         });
@@ -121,6 +133,109 @@ function init() {
         scene.add( mesh );
     } );
 
+   
+    loader.load( './models/ply/ascii/txt_model_2.ply', function ( geometry ) {
+
+        geometry.computeVertexNormals();
+
+        const material = new THREE.MeshStandardMaterial( { color: 0xffffff , emissive:0xffffff,  emissiveIntensity:0.1, opacity: 0.5} );
+        
+        window.addEventListener('scroll', (event) => {
+            op_change(material);
+        });
+        const mesh = new THREE.Mesh( geometry, material );
+        mesh.rotation.x = -Math.PI / 2;
+        mesh.scale.multiplyScalar( 0.1 );
+        scene.add( mesh );
+
+    } );
+
+
+
+    loader.load( './models/ply/ascii/barrier.ply', function ( geometry ) {
+
+        geometry.computeVertexNormals();
+
+        const material = new THREE.MeshStandardMaterial( { color: 0xff0000 ,  opacity: 0.5, emissive: 0xff0000,  emissiveIntensity: 0.1} );
+        const mesh = new THREE.Mesh( geometry, material );
+
+        mesh.rotation.x = -Math.PI / 2;
+        mesh.position.y = 0.5;
+        mesh.scale.multiplyScalar( 0.05 );
+
+        window.addEventListener('scroll', (event) => {
+            vis_switch( mesh, 0, 1000);
+            vis_switch( mesh, 2000, 3000);
+        });
+
+        scene.add( mesh );
+
+    } );
+
+
+    loader.load( './models/ply/ascii/txt_model_pt.ply', function ( geometry ) {
+
+        geometry.computeVertexNormals();
+
+        const material = new THREE.PointsMaterial( { size: 0.01 } );
+        
+        const mesh = new THREE.Points( geometry, material );
+        // console.log( mesh );
+        
+        mesh.rotation.x = -Math.PI / 2;
+        mesh.scale.multiplyScalar( 0.1 );
+        mesh.visible = false;
+        window.addEventListener('scroll', (event) => {
+            vis_switch( mesh, 1000, 2000);
+        });
+        document.getElementById('button_2').addEventListener('click', () => {
+            mesh.visible = !mesh.visible;
+        });
+        console.log(window.scrollY);
+        /*window.onscroll = function(){
+            scrollPosition = window.scrollY;
+            if (scrollPosition > 500 && txt_visible == false){
+                mesh.visible = !mesh.visible;
+                txt_visible = true; 
+            }else{
+                txt_visible = false;
+            }
+        }*/
+        scene.add( mesh );
+    } );
+
+    loader.load( './models/ply/ascii/pt_cloud.ply', function ( geometry ) {
+
+        geometry.computeVertexNormals();
+
+        const material = new THREE.PointsMaterial( { size: 0.01 } );
+        
+        const mesh = new THREE.Points( geometry, material );
+        // console.log( mesh );
+        mesh.position.y = 0.5;
+        mesh.position.z = 0;
+        mesh.rotation.x = -Math.PI / 2;
+        mesh.scale.multiplyScalar( 0.05 );
+        mesh.visible = false;
+        window.addEventListener('scroll', (event) => {
+            vis_switch( mesh, 2000, 3000);
+        });
+        document.getElementById('button_3').addEventListener('click', () => {
+            mesh.visible = !mesh.visible;
+        });
+        
+        scene.add( mesh );
+    } );
+
+    window.addEventListener('mousedown', (event) => {
+        rotationSpeed = 0.00005;
+    });
+
+    window.addEventListener('mouseup', (event) => {
+        rotationSpeed = window.scrollY%1000 / 100000;
+        rotationSpeed = Math.max(0.0005, rotationSpeed);
+        rotationSpeed = Math.min(0.005, rotationSpeed);
+    });
     
 
     // model = loader.parse( './models/ply/ascii/test.ply', 'ply');
@@ -135,54 +250,7 @@ function init() {
     // resize
     scene.add(camera);
     window.addEventListener( 'resize', onWindowResize );
-    // window.addEventListener('mousewheel', onMouseWheel, true);
-
-
-    var myElement = document.getElementById("container");
-    var children = myElement.children;
-
-    // Define the minimum and maximum transparency values
-    var minOpacity = 0;
-    var maxOpacity = 1;
-    // console.log("container", myElement);
-    /*window.onscroll = function() {
-        var scrollPosition = window.scrollY;
-        var newOpacity = (scrollPosition / 10);
-        console.log("scrollPosition", scrollPosition);
-        // console.log("new opacity", newOpacity);
-        // Update the element's transparency
-        myElement.style.opacity = newOpacity;
-    }*/
-
-    window.onscroll = function() {
-        // Get the number of pixels the user has scrolled
-        scrollPosition = window.scrollY;
-        
-        
-       if(scrollPosition > 700){
-        scrollPosition -= 700;
-       }
-
-        // Loop through the child elements
-        for (var i = 0; i < children.length; i++) {
-            // Calculate the distance of the element from the middle of the viewport
-            var elementTop = children[i].offsetTop;
-            var distance = Math.abs(scrollPosition + (window.innerHeight / 2) - elementTop);
-            // console.log(i, elementTop, window.innerHeight / 2, distance);
-            // Calculate the new transparency for the element (from minOpacity to maxOpacity)
-            var newOpacity = (maxOpacity - (distance / 1000) )* 2;
-            
-            
-            console.log("scrollPosition", scrollPosition);
-            
-
-            newOpacity = Math.max(newOpacity, minOpacity);
-            console.log("newOpacity", newOpacity);
-
-            // Update the element's transparency
-            children[i].style.opacity = newOpacity;
-        }
-    }
+    // window.addEventListener('mousewheel', onMouseWheel, true);    
 }   
 
 
@@ -192,6 +260,7 @@ function onWindowResize() {
     camera.updateProjectionMatrix();
     renderer.setSize( window.innerWidth, window.innerHeight );
 }
+
 
 
 function render(time) {
@@ -217,17 +286,17 @@ function render(time) {
     requestAnimationFrame(render);
 }
 
-document.getElementById('button_1').addEventListener('click', () => {
-    camera.position.set( -2.1, -0.4, -3.6);
-    render(performance.now());
-});
+// document.getElementById('button_1').addEventListener('click', () => {
+//     camera.position.set( -2.1, -0.4, -3.6);
+//     render(performance.now());
+// });
 
-canvas.addEventListener("mousedown", (event) => {
-    console.log(`Canvas three: Mouse down at (${event.clientX}, ${event.clientY})`);
-    console.log(camera.position);
-    render(performance.now());
-    // Handle the mousedown event for canvas 2.
-  });
+// canvas.addEventListener("mousedown", (event) => {
+//     console.log(`Canvas three: Mouse down at (${event.clientX}, ${event.clientY})`);
+//     console.log(camera.position);
+//     render(performance.now());
+//     // Handle the mousedown event for canvas 2.
+//   });
 
 
 

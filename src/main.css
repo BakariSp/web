@@ -1,3 +1,7 @@
+html{
+	overflow: visible ! important;
+}
+
 body {
 	margin: 0;
 	background-color: #000;
@@ -7,6 +11,7 @@ body {
 	line-height: 24px;
 	height: 100vh;
 	overscroll-behavior: none;
+	overflow: hidden;
 	
 }
 
@@ -83,16 +88,30 @@ a, button, input, select {
 	z-index: 0;
 }
 
+.button {
+	color: #fff;
+	background-color: rgba(0, 0, 0, 0);
+	border: #fff;
+	border-width: 2px;
+}
+
 #button_1 {
     position: absolute;
-	top: 20px;
-	left: 100px;
+	top: 50px;
+	left: 95px;
     z-index: 2;
 }
 
 #button_2 {
     position: absolute;
-	top: 700px;
+	top: 210px;
+	right: 100px;
+    z-index: 2;
+}
+
+#button_3 {
+    position: absolute;
+	top: 3560px;
 	right: 100px;
     z-index: 2;
 }
@@ -109,9 +128,20 @@ a, button, input, select {
 
 #container2 {
 	position: absolute;
-	height: auto;
+	height: 2000px;
 	width: 400px;
 	top: 200px;
+	right: 50px;	
+	opacity: 1;
+	z-index: 1;
+}
+
+
+#container {
+	position: absolute;
+	height: auto;
+	width: 400px;
+	bottom: 100px;
 	right: 50px;	
 	opacity: 1;
 	z-index: 1;
@@ -128,6 +158,7 @@ a, button, input, select {
 }
 
 .my_text {
+	text-transform: uppercase;
 	width: 400px;
 	font-size: 32px; 
 	line-height: 40px;
